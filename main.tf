@@ -5,7 +5,7 @@ resource "azuread_application" "oidc" {
 
 # Create a federated identity
 locals {
-  ref_string     = var.entity_type == "ref" && var.ref_branch != null ? "refs/head/${var.ref_branch}" : var.entity_type == "ref" && var.ref_tag != null ? "refs/tags/${var.ref_tag}" : null
+  ref_string     = var.entity_type == "ref" && var.ref_branch != null ? "refs/heads/${var.ref_branch}" : var.entity_type == "ref" && var.ref_tag != null ? "refs/tags/${var.ref_tag}" : null
   subject_string = var.entity_type == "environment" ? "environment:${var.environment_name}" : var.entity_type == "ref" ? "ref:${local.ref_string}" : "pull-request"
 }
 
