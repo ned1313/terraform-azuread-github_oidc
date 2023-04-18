@@ -15,11 +15,11 @@ variable "repository_name" {
 
 variable "entity_type" {
   type        = string
-  description = "(Required) Type of entity for federation. Can be environment, ref, pull-request, tag"
+  description = "(Required) Type of entity for federation. Can be environment, ref, pull_request, tag"
 
   validation {
-    condition     = contains(["environment", "ref", "pull-request"], var.entity_type)
-    error_message = "The entity_type must be one of the following: environment, ref, pull-request."
+    condition     = contains(["environment", "ref", "pull_request"], var.entity_type)
+    error_message = "The entity_type must be one of the following: environment, ref, pull_request."
   }
 }
 

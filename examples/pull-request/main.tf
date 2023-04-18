@@ -3,7 +3,7 @@ module "pull_request" {
 
   identity_name   = "dev-oidc-identity"
   repository_name = "ned1313/vnet-deployment"
-  entity_type     = "pull-request"
+  entity_type     = "pull_request"
 }
 
 output "service_principal" {
