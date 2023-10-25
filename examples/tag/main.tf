@@ -8,5 +8,6 @@ module "release_tag" {
 }
 
 output "service_principal" {
-  value = module.release_tag.service_principal
+  description = "Azure Service Principal"
+  value       = module.release_tag.service_principal
 }
