@@ -8,5 +8,6 @@ module "development_env" {
 }
 
 output "service_principal" {
-  value = module.development_env.service_principal
+  description = "Azure Service Principal"
+  value       = module.development_env.service_principal
 }
