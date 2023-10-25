@@ -7,5 +7,6 @@ module "pull_request" {
 }
 
 output "service_principal" {
-  value = module.pull_request.service_principal
+  description = "Azure Service Principal"
+  value       = module.pull_request.service_principal
 }
