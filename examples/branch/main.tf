@@ -8,5 +8,6 @@ module "development_branch" {
 }
 
 output "service_principal" {
-  value = module.development_branch.service_principal
+  description = "Azure Service Principal"
+  value       = module.development_branch.service_principal
 }
