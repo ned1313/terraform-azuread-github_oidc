@@ -1,5 +1,5 @@
 # Create an application
-resource "azuread_application" "oidc" {
+resource "azuread_application_registration" "oidc" {
   display_name = var.identity_name
 }
 
@@ -10,12 +10,12 @@ locals {
 }
 
 resource "azuread_application_federated_identity_credential" "oidc" {
-  application_object_id = azuread_application.oidc.object_id
-  display_name          = azuread_application.oidc.display_name
-  description           = "GitHub OIDC for ${var.repository_name}."
-  audiences             = ["api://AzureADTokenExchange"]
-  issuer                = "https://token.actions.githubusercontent.com"
-  subject               = "repo:${var.repository_name}:${local.subject_string}"
+  application_id = azuread_application_registration.oidc.id
+  display_name   = azuread_application_registration.oidc.display_name
+  description    = "GitHub OIDC for ${var.repository_name}."
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.repository_name}:${local.subject_string}"
 }
 
 # Create a service principal
@@ -26,6 +26,6 @@ locals {
 }
 
 resource "azuread_service_principal" "oidc" {
-  application_id = azuread_application.oidc.application_id
-  owners         = [local.owner_id]
+  client_id = azuread_application_registration.oidc.client_id
+  owners    = [local.owner_id]
 }
