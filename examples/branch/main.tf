@@ -4,7 +4,7 @@ module "development_branch" {
   identity_name   = "dev-oidc-identity"
   repository_name = "ned1313/vnet-deployment"
   entity_type     = "ref"
-  ref_branch      = "development"
+  ref_branches    = ["development"]
 }
 
 output "service_principal" {

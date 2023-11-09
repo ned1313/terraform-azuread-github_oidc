@@ -23,22 +23,28 @@ variable "entity_type" {
   }
 }
 
-variable "environment_name" {
-  type        = string
+variable "create_pr_identity" {
+  type        = bool
+  description = "(Optional) Whether to create a pull request federated identity in addition to other identities. Defaults to false."
+  default     = false
+}
+
+variable "environment_names" {
+  type        = list(string)
   description = "(Optional) Name of environment entity. Required if entity_type is environment."
-  default     = null
+  default     = []
 }
 
-variable "ref_branch" {
-  type        = string
+variable "ref_branches" {
+  type        = list(string)
   description = "(Optional) Name of branch to use with ref entity. Required if entity_type is ref and branch is the target."
-  default     = null
+  default     = []
 }
 
-variable "ref_tag" {
-  type        = string
+variable "ref_tags" {
+  type        = list(string)
   description = "(Optional) Name of tag to use with ref entity. Required if entity_type is ref and tag is the target."
-  default     = null
+  default     = []
 }
 
 variable "owner_id" {
