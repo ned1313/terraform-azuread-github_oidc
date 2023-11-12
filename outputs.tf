@@ -5,6 +5,6 @@ output "service_principal" {
 }
 
 output "azuread_application" {
-  value = azuread_application.oidc
-  description = "The full application object associated with the service principal."
+  value = azuread_application_registration.oidc
+  description = "The full application registration object associated with the service principal."
 }
