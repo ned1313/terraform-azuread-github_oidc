@@ -1,6 +1,24 @@
+# The SP is going to need access to the Application.ReadWrite.OwnedBy role of the 
+# MicrosoftGraph API in order to create/manage applications provisioned by it
+# so lookup the necessary application and role id
+data "azuread_application_published_app_ids" "well_known" {}
+
+resource "azuread_service_principal" "msgraph" {
+  client_id    = data.azuread_application_published_app_ids.well_known.result["MicrosoftGraph"]
+  use_existing = true
+}
+
 # Create an application
-resource "azuread_application_registration" "oidc" {
+resource "azuread_application" "oidc" {
   display_name = var.identity_name
+  required_resource_access {
+    resource_app_id = data.azuread_application_published_app_ids.well_known.result["MicrosoftGraph"]
+
+    resource_access {
+      id   = azuread_service_principal.msgraph.app_role_ids["Application.ReadWrite.OwnedBy"]
+      type = "Role"
+    }
+  }
 }
 
 # Create a federated identity
@@ -10,8 +28,8 @@ locals {
 }
 
 resource "azuread_application_federated_identity_credential" "oidc" {
-  application_id = azuread_application_registration.oidc.id
-  display_name   = azuread_application_registration.oidc.display_name
+  application_id = azuread_application.oidc.id
+  display_name   = azuread_application.oidc.display_name
   description    = "GitHub OIDC for ${var.repository_name}."
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
@@ -26,6 +44,13 @@ locals {
 }
 
 resource "azuread_service_principal" "oidc" {
-  client_id = azuread_application_registration.oidc.client_id
+  client_id = azuread_application.oidc.client_id
   owners    = [local.owner_id]
+}
+
+#  Grant admin consent for permissions requested by the SP in the required_resource_access block
+resource "azuread_app_role_assignment" "oidc" {
+  app_role_id         = azuread_service_principal.msgraph.app_role_ids["Application.ReadWrite.OwnedBy"]
+  principal_object_id = azuread_service_principal.oidc.object_id
+  resource_object_id  = azuread_service_principal.msgraph.object_id
 }
