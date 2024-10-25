@@ -31,19 +31,19 @@ variable "create_pr_identity" {
 
 variable "environment_names" {
   type        = list(string)
-  description = "(Optional) Name of environment entity. Required if entity_type is environment."
+  description = "(Optional) Name of environment entities. Required if entity_type is environment."
   default     = []
 }
 
 variable "ref_branches" {
   type        = list(string)
-  description = "(Optional) Name of branch to use with ref entity. Required if entity_type is ref and branch is the target."
+  description = "(Optional) Name of branches to use with ref entity. Required if entity_type is ref and branch is the target."
   default     = []
 }
 
 variable "ref_tags" {
   type        = list(string)
-  description = "(Optional) Name of tag to use with ref entity. Required if entity_type is ref and tag is the target."
+  description = "(Optional) Name of tags to use with ref entity. Required if entity_type is ref and tag is the target."
   default     = []
 }
 
