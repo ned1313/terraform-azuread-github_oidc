@@ -3,19 +3,46 @@ resource "azuread_application_registration" "oidc" {
   display_name = var.identity_name
 }
 
-# Create a federated identity
-locals {
-  ref_string     = var.entity_type == "ref" && var.ref_branch != null ? "refs/heads/${var.ref_branch}" : var.entity_type == "ref" && var.ref_tag != null ? "refs/tags/${var.ref_tag}" : null
-  subject_string = var.entity_type == "environment" ? "environment:${var.environment_name}" : var.entity_type == "ref" ? "ref:${local.ref_string}" : "pull_request"
-}
-
-resource "azuread_application_federated_identity_credential" "oidc" {
+# Create federated identities
+resource "azuread_application_federated_identity_credential" "branches" {
+  for_each       = toset(var.ref_branches)
   application_id = azuread_application_registration.oidc.id
-  display_name   = azuread_application_registration.oidc.display_name
-  description    = "GitHub OIDC for ${var.repository_name}."
+  display_name   = "${azuread_application_registration.oidc.display_name}-branch-${each.value}"
+  description    = "GitHub OIDC for ${var.repository_name} and branch ${each.value}."
   audiences      = ["api://AzureADTokenExchange"]
   issuer         = "https://token.actions.githubusercontent.com"
-  subject        = "repo:${var.repository_name}:${local.subject_string}"
+  subject        = "repo:${var.repository_name}:ref:refs/heads/${each.value}"
+}
+
+resource "azuread_application_federated_identity_credential" "tags" {
+  for_each       = toset(var.ref_tags)
+  application_id = azuread_application_registration.oidc.id
+  display_name   = "${azuread_application_registration.oidc.display_name}-tag-${each.value}"
+  description    = "GitHub OIDC for ${var.repository_name} and tag ${each.value}."
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.repository_name}:ref:refs/tags/${each.value}"
+}
+
+resource "azuread_application_federated_identity_credential" "environments" {
+  for_each       = toset(var.environment_names)
+  application_id = azuread_application_registration.oidc.id
+  display_name   = "${azuread_application_registration.oidc.display_name}-environment-${each.value}"
+  description    = "GitHub OIDC for ${var.repository_name} and environment ${each.value}."
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.repository_name}:environment:${each.value}"
+}
+
+resource "azuread_application_federated_identity_credential" "pr" {
+  # Create a pull request federated identity if create_pr_identity is true or entity_type is pull_request
+  count          = var.create_pr_identity || var.entity_type == "pull_request" ? 1 : 0
+  application_id = azuread_application_registration.oidc.id
+  display_name   = "${azuread_application_registration.oidc.display_name}-pr"
+  description    = "GitHub OIDC for ${var.repository_name} Pull Requests"
+  audiences      = ["api://AzureADTokenExchange"]
+  issuer         = "https://token.actions.githubusercontent.com"
+  subject        = "repo:${var.repository_name}:pull_request"
 }
 
 # Create a service principal

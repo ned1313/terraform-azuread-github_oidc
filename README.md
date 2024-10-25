@@ -18,12 +18,12 @@ The module is intended to support the use of GitHub Actions OIDC authentication 
 # Use the module with a GitHub environment named development
 module "development_env" {
     source           = "ned1313/github_oidc/azuread"
-    version          = "1.0"
+    version          = "2.0"
 
     identity_name    = "dev-oidc-identity"
     repository_name  = "ned1313/vnet-deployment"
     entity_type      = "environment"
-    environment_name = "development"
+    environment_names = ["development"]
 }
 ```
 

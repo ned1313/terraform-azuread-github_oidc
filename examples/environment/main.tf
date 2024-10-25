@@ -1,10 +1,10 @@
 module "development_env" {
-    source           = "../.."
+  source = "../.."
 
-    identity_name    = "dev-oidc-identity"
-    repository_name  = "ned1313/vnet-deployment"
-    entity_type      = "environment"
-    environment_name = "development"
+  identity_name     = "dev-oidc-identity"
+  repository_name   = "ned1313/vnet-deployment"
+  entity_type       = "environment"
+  environment_names = ["development"]
 }
 
 output "service_principal" {
